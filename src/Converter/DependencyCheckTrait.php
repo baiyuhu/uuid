@@ -57,23 +57,6 @@ trait DependencyCheckTrait
         return true;
     }
 
-    /**
-     * Returns boolean true if the moontoast/math library is present, throws
-     * UnsatisfiedDependencyException otherwise
-     *
-     * @throws UnsatisfiedDependencyException if moontoast/math is not loaded
-     */
-    private function checkMoontoastMathLibrary(): bool
-    {
-        if (!class_exists('Moontoast\Math\BigNumber')) {
-            throw new UnsatisfiedDependencyException(
-                'moontoast/math must be present to use this converter'
-            );
-        }
-
-        return true;
-    }
-
     protected function getPhpIntSize(): int
     {
         return PHP_INT_SIZE;

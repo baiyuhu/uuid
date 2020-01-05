@@ -22,11 +22,9 @@ use Ramsey\Uuid\Codec\CodecInterface;
 use Ramsey\Uuid\Codec\GuidStringCodec;
 use Ramsey\Uuid\Codec\StringCodec;
 use Ramsey\Uuid\Converter\Number\BigNumberConverter;
-use Ramsey\Uuid\Converter\Number\DegradedNumberConverter;
 use Ramsey\Uuid\Converter\Number\GmpConverter;
 use Ramsey\Uuid\Converter\NumberConverterInterface;
 use Ramsey\Uuid\Converter\Time\BigNumberTimeConverter;
-use Ramsey\Uuid\Converter\Time\DegradedTimeConverter;
 use Ramsey\Uuid\Converter\Time\GmpTimeConverter;
 use Ramsey\Uuid\Converter\Time\PhpTimeConverter;
 use Ramsey\Uuid\Converter\TimeConverterInterface;
@@ -268,11 +266,7 @@ class FeatureSet
             return new GmpConverter();
         }
 
-        if ($this->hasBigNumber()) {
-            return new BigNumberConverter();
-        }
-
-        return new DegradedNumberConverter();
+        return new BigNumberConverter();
     }
 
     /**
@@ -315,11 +309,7 @@ class FeatureSet
             return new GmpTimeConverter();
         }
 
-        if ($this->hasBigNumber()) {
-            return new BigNumberTimeConverter();
-        }
-
-        return new DegradedTimeConverter();
+        return new BigNumberTimeConverter();
     }
 
     /**
@@ -348,14 +338,6 @@ class FeatureSet
             new Rfc4122DegradedUuidBuilder($this->numberConverter, $this->timeConverter),
             new NonstandardDegradedUuidBuilder($this->numberConverter, $this->timeConverter),
         ]);
-    }
-
-    /**
-     * Returns true if moontoast/math is available
-     */
-    private function hasBigNumber(): bool
-    {
-        return class_exists('Moontoast\Math\BigNumber') && !$this->disableBigNumber;
     }
 
     /**

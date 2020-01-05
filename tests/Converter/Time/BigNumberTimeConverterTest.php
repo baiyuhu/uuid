@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Ramsey\Uuid\Test\Converter\Time;
 
-use AspectMock\Test as AspectMock;
 use Ramsey\Uuid\Converter\Time\BigNumberTimeConverter;
 use Ramsey\Uuid\Exception\InvalidArgumentException;
-use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
 use Ramsey\Uuid\Test\TestCase;
 
 class BigNumberTimeConverterTest extends TestCase
@@ -40,48 +38,6 @@ class BigNumberTimeConverterTest extends TestCase
         $returned = $converter->convertTime('135606608744910000');
 
         $this->assertSame('1341368074', $returned);
-    }
-
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
-    public function testCalculateTimeThrowsExceptionWhenGmpExtensionNotPresent(): void
-    {
-        $classExists = AspectMock::func(
-            'Ramsey\Uuid\Converter',
-            'class_exists',
-            false
-        );
-
-        $converter = new BigNumberTimeConverter();
-
-        $this->expectException(UnsatisfiedDependencyException::class);
-        $this->expectExceptionMessage('moontoast/math must be present to use this converter');
-
-        $converter->calculateTime('1234', '5678');
-        $classExists->verifyInvokedOnce(['Moontoast\Math\BigNumber']);
-    }
-
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
-    public function testConvertTimeThrowsExceptionWhenGmpExtensionNotPresent(): void
-    {
-        $classExists = AspectMock::func(
-            'Ramsey\Uuid\Converter',
-            'class_exists',
-            false
-        );
-
-        $converter = new BigNumberTimeConverter();
-
-        $this->expectException(UnsatisfiedDependencyException::class);
-        $this->expectExceptionMessage('moontoast/math must be present to use this converter');
-
-        $converter->convertTime('1234');
-        $classExists->verifyInvokedOnce(['Moontoast\Math\BigNumber']);
     }
 
     public function testCalculateTimeThrowsExceptionWhenSecondsIsNotOnlyDigits(): void

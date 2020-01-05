@@ -4,56 +4,12 @@ declare(strict_types=1);
 
 namespace Ramsey\Uuid\Test\Converter\Number;
 
-use AspectMock\Test as AspectMock;
 use Ramsey\Uuid\Converter\Number\BigNumberConverter;
 use Ramsey\Uuid\Exception\InvalidArgumentException;
-use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
 use Ramsey\Uuid\Test\TestCase;
 
 class BigNumberConverterTest extends TestCase
 {
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
-    public function testFromHexThrowsExceptionWhenMoontoastMathNotPresent(): void
-    {
-        $classExists = AspectMock::func(
-            'Ramsey\Uuid\Converter',
-            'class_exists',
-            false
-        );
-
-        $converter = new BigNumberConverter();
-
-        $this->expectException(UnsatisfiedDependencyException::class);
-        $this->expectExceptionMessage('moontoast/math must be present to use this converter');
-
-        $converter->fromHex('abcd');
-        $classExists->verifyInvokedOnce(['Moontoast\Math\BigNumber']);
-    }
-
-    /**
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
-    public function testToHexThrowsExceptionWhenMoontoastMathNotPresent(): void
-    {
-        $classExists = AspectMock::func(
-            'Ramsey\Uuid\Converter',
-            'class_exists',
-            false
-        );
-
-        $converter = new BigNumberConverter();
-
-        $this->expectException(UnsatisfiedDependencyException::class);
-        $this->expectExceptionMessage('moontoast/math must be present to use this converter');
-
-        $converter->toHex('1234');
-        $classExists->verifyInvokedOnce(['Moontoast\Math\BigNumber']);
-    }
-
     public function testFromHexThrowsExceptionWhenStringDoesNotContainOnlyHexadecimalCharacters(): void
     {
         $converter = new BigNumberConverter();

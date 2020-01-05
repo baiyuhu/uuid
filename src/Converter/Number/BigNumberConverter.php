@@ -14,15 +14,14 @@ declare(strict_types=1);
 
 namespace Ramsey\Uuid\Converter\Number;
 
-use Moontoast\Math\BigNumber;
+use Brick\Math\BigInteger;
 use Ramsey\Uuid\Converter\DependencyCheckTrait;
 use Ramsey\Uuid\Converter\NumberConverterInterface;
 use Ramsey\Uuid\Converter\NumberStringTrait;
 use Ramsey\Uuid\Exception\InvalidArgumentException;
-use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
 
 /**
- * BigNumberConverter uses moontoast/math to convert UUIDs from hexadecimal
+ * BigNumberConverter uses brick/math to convert UUIDs from hexadecimal
  * characters into string representations of integers and vice versa
  */
 class BigNumberConverter implements NumberConverterInterface
@@ -32,7 +31,6 @@ class BigNumberConverter implements NumberConverterInterface
 
     /**
      * @throws InvalidArgumentException if $hex is not a hexadecimal string
-     * @throws UnsatisfiedDependencyException if the chosen converter is not present
      *
      * @inheritDoc
      *
@@ -40,16 +38,14 @@ class BigNumberConverter implements NumberConverterInterface
      */
     public function fromHex(string $hex): string
     {
-        $this->checkMoontoastMathLibrary();
         $this->checkHexadecimalString($hex, 'hex');
 
         /** @psalm-suppress ImpureMethodCall */
-        return BigNumber::convertToBase10($hex, 16);
+        return BigInteger::fromBase($hex, 16)->toBase(10);
     }
 
     /**
      * @throws InvalidArgumentException if $integer is not an integer string
-     * @throws UnsatisfiedDependencyException if the chosen converter is not present
      *
      * @inheritDoc
      *
@@ -57,10 +53,9 @@ class BigNumberConverter implements NumberConverterInterface
      */
     public function toHex(string $number): string
     {
-        $this->checkMoontoastMathLibrary();
         $this->checkIntegerString($number, 'number');
 
         /** @psalm-suppress ImpureMethodCall */
-        return BigNumber::convertFromBase10($number, 16);
+        return BigInteger::fromBase($number, 10)->toBase(16);
     }
 }

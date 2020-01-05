@@ -14,15 +14,15 @@ declare(strict_types=1);
 
 namespace Ramsey\Uuid\Converter\Time;
 
-use Moontoast\Math\BigNumber;
+use Brick\Math\BigInteger;
+use Brick\Math\RoundingMode;
 use Ramsey\Uuid\Converter\DependencyCheckTrait;
 use Ramsey\Uuid\Converter\NumberStringTrait;
 use Ramsey\Uuid\Converter\TimeConverterInterface;
 use Ramsey\Uuid\Exception\InvalidArgumentException;
-use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
 
 /**
- * BigNumberTimeConverter uses the moontoast/math library's `BigNumber` to
+ * BigNumberTimeConverter uses the brick/math library's `BigInteger` to
  * provide facilities for converting parts of time into representations that may
  * be used in UUIDs
  */
@@ -33,34 +33,27 @@ class BigNumberTimeConverter implements TimeConverterInterface
 
     /**
      * @throws InvalidArgumentException if $seconds or $microseconds are not integer strings
-     * @throws UnsatisfiedDependencyException if the chosen converter is not present
      *
      * @inheritDoc
      *
      * @psalm-pure
-     * @psalm-suppress ImpureMethodCall The use of the external moontoast/math
+     * @psalm-suppress ImpureMethodCall The use of the external brick/math
      *     library causes Psalm to complain about impure method calls.
      */
     public function calculateTime(string $seconds, string $microSeconds): array
     {
-        $this->checkMoontoastMathLibrary();
         $this->checkIntegerString($seconds, 'seconds');
         $this->checkIntegerString($microSeconds, 'microSeconds');
 
-        $uuidTime = new BigNumber('0');
+        $sec = BigInteger::of($seconds)->multipliedBy('10000000');
+        $usec = BigInteger::of($microSeconds)->multipliedBy('10');
 
-        $sec = new BigNumber($seconds);
-        $sec->multiply('10000000');
+        $uuidTime = BigInteger::zero()
+            ->plus($sec)
+            ->plus($usec)
+            ->plus('122192928000000000');
 
-        $usec = new BigNumber($microSeconds);
-        $usec->multiply('10');
-
-        $uuidTime
-            ->add($sec)
-            ->add($usec)
-            ->add('122192928000000000');
-
-        $uuidTimeHex = sprintf('%016s', $uuidTime->convertToBase(16));
+        $uuidTimeHex = str_pad($uuidTime->toBase(16), 16, '0', STR_PAD_LEFT);
 
         return [
             'low' => substr($uuidTimeHex, 8),
@@ -71,24 +64,20 @@ class BigNumberTimeConverter implements TimeConverterInterface
 
     /**
      * @throws InvalidArgumentException if $timestamp is not an integer string
-     * @throws UnsatisfiedDependencyException if the chosen converter is not present
      *
      * @inheritDoc
      *
      * @psalm-pure
-     * @psalm-suppress ImpureMethodCall The use of the external moontoast/math
-     *     library causes Psalm to complain about impure method calls.
      */
     public function convertTime(string $timestamp): string
     {
-        $this->checkMoontoastMathLibrary();
         $this->checkIntegerString($timestamp, 'timestamp');
 
-        $ts = new BigNumber($timestamp, 20);
-        $ts->subtract('122192928000000000');
-        $ts->divide('10000000.0');
-        $ts->round();
+        /** @psalm-suppress ImpureMethodCall */
+        $ts = BigInteger::of($timestamp)
+            ->minus('122192928000000000')
+            ->dividedBy('10000000', RoundingMode::HALF_CEILING);
 
-        return $ts->getValue();
+        return (string) $ts;
     }
 }

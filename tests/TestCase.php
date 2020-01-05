@@ -26,15 +26,6 @@ class TestCase extends PhpUnitTestCase
         }
     }
 
-    protected function skipIfNoMoontoastMath(): void
-    {
-        if (!$this->hasMoontoastMath()) {
-            $this->markTestSkipped(
-                'Skipping test that requires moontoast/math.'
-            );
-        }
-    }
-
     protected function skipIfNoGmp(): void
     {
         if (!$this->hasGmp()) {
@@ -42,11 +33,6 @@ class TestCase extends PhpUnitTestCase
                 'Skipping test that requires GMP.'
             );
         }
-    }
-
-    protected function hasMoontoastMath(): bool
-    {
-        return class_exists('Moontoast\\Math\\BigNumber');
     }
 
     protected function hasGmp(): bool
