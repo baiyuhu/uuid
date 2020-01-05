@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ramsey\Uuid\Test\Converter\Time;
 
+use Brick\Math\BigInteger;
 use Ramsey\Uuid\Converter\Time\BigNumberTimeConverter;
 use Ramsey\Uuid\Exception\InvalidArgumentException;
 use Ramsey\Uuid\Test\TestCase;
@@ -12,16 +13,22 @@ class BigNumberTimeConverterTest extends TestCase
 {
     public function testCalculateTimeReturnsArrayOfTimeSegments(): void
     {
-        $this->skip64BitTest();
+        $seconds = BigInteger::of(5);
+        $microSeconds = BigInteger::of(3);
 
-        $seconds = 5;
-        $microSeconds = 3;
-        $calculatedTime = ($seconds * 10000000) + ($microSeconds * 10) + 0x01b21dd213814000;
+        $calculatedTime = BigInteger::zero()
+            ->plus($seconds->multipliedBy(10000000))
+            ->plus($microSeconds->multipliedBy(10))
+            ->plus(BigInteger::fromBase('01b21dd213814000', 16));
+
+        $maskLow = BigInteger::fromBase('ffffffff', 16);
+        $maskMid = BigInteger::fromBase('ffff', 16);
+        $maskHi = BigInteger::fromBase('0fff', 16);
 
         $expectedArray = [
-            'low' => sprintf('%08x', $calculatedTime & 0xffffffff),
-            'mid' => sprintf('%04x', ($calculatedTime >> 32) & 0xffff),
-            'hi' => sprintf('%04x', ($calculatedTime >> 48) & 0x0fff),
+            'low' => sprintf('%08s', $calculatedTime->and($maskLow)->toBase(16)),
+            'mid' => sprintf('%04s', $calculatedTime->shiftedRight(32)->and($maskMid)->toBase(16)),
+            'hi' => sprintf('%04s', $calculatedTime->shiftedRight(48)->and($maskHi)->toBase(16)),
         ];
 
         $converter = new BigNumberTimeConverter();
@@ -32,8 +39,6 @@ class BigNumberTimeConverterTest extends TestCase
 
     public function testConvertTime(): void
     {
-        $this->skip64BitTest();
-
         $converter = new BigNumberTimeConverter();
         $returned = $converter->convertTime('135606608744910000');
 
