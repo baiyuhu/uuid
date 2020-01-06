@@ -40,6 +40,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * Introduce a `Builder\FallbackBuilder`, used by `FeatureSet` to help decide
   whether to return a `Uuid` or `Nonstandard\Uuid` when decoding a
   UUID string or bytes.
+* Introduce `Type\IntegerValue` and `Type\Timestamp` for improved type-safety
+  when dealing with integer string values.
 
 ### Changed
 
@@ -50,6 +52,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   returns an instance of `\DateTimeImmutable` instead of `\DateTime`.
 * Add `getValidator()` method to `UuidFactoryInterface`.
 * Add `convertTime()` method to `Converter\TimeConverterInterface`.
+* Add `getTimestamp()` method to `Provider\TimeProviderInterface`.
 * Introduce `TimeConverterInterface $timeConverter` as fourth required
   constructor parameter for `Uuid` and second required constructor parameter for
   `Builder\DefaultUuidBuilder` and `Builder\DegradedUuidBuilder`.
@@ -77,6 +80,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   `UuidInterface`, so BC breaks should not occur if typehints use the interface.
 
 ### Deprecated
+
+* `Provider\TimeProviderInterface::currentTime()` is deprecated; transition to
+  the `getTimestamp()` method on the same interface.
 
 ### Removed
 

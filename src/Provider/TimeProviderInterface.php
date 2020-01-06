@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Ramsey\Uuid\Provider;
 
+use Ramsey\Uuid\Type\Timestamp;
+
 /**
  * A time provider retrieves the current time
  */
@@ -22,7 +24,14 @@ interface TimeProviderInterface
     /**
      * Returns a timestamp array
      *
-     * @return int[] Array containing `sec` and `usec` components of a timestamp
+     * @deprecated Transition to {@see TimeProviderInterface::getTimestamp()}.
+     *
+     * @return int[]|string[] Array containing `sec` and `usec` components of a timestamp
      */
     public function currentTime(): array;
+
+    /**
+     * Returns a timestamp object
+     */
+    public function getTimestamp(): Timestamp;
 }

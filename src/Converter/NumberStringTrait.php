@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Ramsey\Uuid\Converter;
 
 use Ramsey\Uuid\Exception\InvalidArgumentException;
+use Ramsey\Uuid\Type\IntegerValue;
 
 /**
  * Provides shared functionality to check the values of string numbers for
@@ -38,13 +39,9 @@ trait NumberStringTrait
      */
     private function checkIntegerString(string $integer, string $param): bool
     {
-        // If it is a negative integer, remove the sign so that the string
-        // can be checked properly for only digits with ctype_digit().
-        if (strpos($integer, '-') === 0) {
-            $integer = substr($integer, 1);
-        }
-
-        if (!ctype_digit($integer)) {
+        try {
+            new IntegerValue($integer);
+        } catch (\Throwable $e) {
             throw new InvalidArgumentException(
                 "\${$param} must contain only digits"
             );
