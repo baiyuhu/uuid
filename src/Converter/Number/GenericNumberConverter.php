@@ -15,24 +15,21 @@ declare(strict_types=1);
 namespace Ramsey\Uuid\Converter\Number;
 
 use Ramsey\Uuid\Converter\NumberConverterInterface;
-use Ramsey\Uuid\Math\BrickMathCalculator;
+use Ramsey\Uuid\Math\CalculatorInterface;
+use Ramsey\Uuid\Type\IntegerValue;
 
 /**
- * Previously used to integrate moontoast/math as a bignum arithmetic library,
- * BigNumberConverter is deprecated in favor of ArbitraryPrecisionNumberConverter
- *
- * @deprecated Transition to {@see GenericNumberConverter}.
  */
-class BigNumberConverter implements NumberConverterInterface
+class GenericNumberConverter implements NumberConverterInterface
 {
     /**
-     * @var NumberConverterInterface
+     * @var CalculatorInterface
      */
-    private $converter;
+    private $calculator;
 
-    public function __construct()
+    public function __construct(CalculatorInterface $calculator)
     {
-        $this->converter = new GenericNumberConverter(new BrickMathCalculator());
+        $this->calculator = $calculator;
     }
 
     /**
@@ -41,7 +38,7 @@ class BigNumberConverter implements NumberConverterInterface
      */
     public function fromHex(string $hex): string
     {
-        return $this->converter->fromHex($hex);
+        return $this->calculator->fromBase($hex, 16)->toString();
     }
 
     /**
@@ -50,6 +47,6 @@ class BigNumberConverter implements NumberConverterInterface
      */
     public function toHex(string $number): string
     {
-        return $this->converter->toHex($number);
+        return $this->calculator->toBase(new IntegerValue($number), 16);
     }
 }

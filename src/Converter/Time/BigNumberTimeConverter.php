@@ -15,54 +15,33 @@ declare(strict_types=1);
 namespace Ramsey\Uuid\Converter\Time;
 
 use Ramsey\Uuid\Converter\TimeConverterInterface;
-use Ramsey\Uuid\Math\Calculator;
-use Ramsey\Uuid\Type\IntegerValue;
-use Ramsey\Uuid\Type\Time;
+use Ramsey\Uuid\Math\BrickMathCalculator;
 
 /**
- * BigNumberTimeConverter uses the brick/math library to
- * provide facilities for converting parts of time into representations that may
- * be used in UUIDs
+ * Previously used to integrate moontoast/math as a bignum arithmetic library,
+ * BigNumberTimeConverter is deprecated in favor of ArbitraryPrecisionTimeConverter
+ *
+ * @deprecated Transition to {@see GenericTimeConverter}.
  */
 class BigNumberTimeConverter implements TimeConverterInterface
 {
+    /**
+     * @var TimeConverterInterface
+     */
+    private $converter;
+
+    public function __construct()
+    {
+        $this->converter = new GenericTimeConverter(new BrickMathCalculator());
+    }
+
     /**
      * @inheritDoc
      * @psalm-pure
      */
     public function calculateTime(string $seconds, string $microSeconds): array
     {
-        $timestamp = new Time($seconds, $microSeconds);
-        $calculator = new Calculator();
-
-        $sec = $calculator->multiply(
-            $timestamp->getSeconds(),
-            new IntegerValue('10000000')
-        );
-
-        $usec = $calculator->multiply(
-            $timestamp->getMicroSeconds(),
-            new IntegerValue('10')
-        );
-
-        $uuidTime = $calculator->add(
-            $sec,
-            $usec,
-            new IntegerValue('122192928000000000')
-        );
-
-        $uuidTimeHex = str_pad(
-            $calculator->toHexadecimal($uuidTime)->toString(),
-            16,
-            '0',
-            STR_PAD_LEFT
-        );
-
-        return [
-            'low' => substr($uuidTimeHex, 8),
-            'mid' => substr($uuidTimeHex, 4, 4),
-            'hi' => substr($uuidTimeHex, 0, 4),
-        ];
+        return $this->converter->calculateTime($seconds, $microSeconds);
     }
 
     /**
@@ -71,16 +50,6 @@ class BigNumberTimeConverter implements TimeConverterInterface
      */
     public function convertTime(string $timestamp): string
     {
-        $timestamp = new IntegerValue($timestamp);
-        $calculator = new Calculator();
-
-        $ts = $calculator->subtract(
-            $timestamp,
-            new IntegerValue('122192928000000000')
-        );
-
-        $ts = $calculator->divide($ts, new IntegerValue('10000000'));
-
-        return $ts->toString();
+        return $this->converter->convertTime($timestamp);
     }
 }

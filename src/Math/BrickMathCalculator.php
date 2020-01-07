@@ -24,7 +24,7 @@ use Ramsey\Uuid\Type\IntegerValue;
 /**
  * @psalm-immutable
  */
-final class Calculator
+final class BrickMathCalculator implements CalculatorInterface
 {
     public function add(IntegerValue $augend, IntegerValue ...$addends): IntegerValue
     {
@@ -78,7 +78,7 @@ final class Calculator
         return new IntegerValue((string) $quotient);
     }
 
-    public function fromBase(string $value, int $base = 16): IntegerValue
+    public function fromBase(string $value, int $base): IntegerValue
     {
         try {
             /** @psalm-suppress ImpureMethodCall */
@@ -92,7 +92,7 @@ final class Calculator
         }
     }
 
-    public function toBase(IntegerValue $value, int $base = 16): string
+    public function toBase(IntegerValue $value, int $base): string
     {
         try {
             /** @psalm-suppress ImpureMethodCall */
@@ -108,6 +108,6 @@ final class Calculator
 
     public function toHexadecimal(IntegerValue $value): Hexadecimal
     {
-        return new Hexadecimal($this->toBase($value));
+        return new Hexadecimal($this->toBase($value, 16));
     }
 }

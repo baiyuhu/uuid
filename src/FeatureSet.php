@@ -21,8 +21,10 @@ use Ramsey\Uuid\Codec\CodecInterface;
 use Ramsey\Uuid\Codec\GuidStringCodec;
 use Ramsey\Uuid\Codec\StringCodec;
 use Ramsey\Uuid\Converter\Number\BigNumberConverter;
+use Ramsey\Uuid\Converter\Number\GenericNumberConverter;
 use Ramsey\Uuid\Converter\NumberConverterInterface;
 use Ramsey\Uuid\Converter\Time\BigNumberTimeConverter;
+use Ramsey\Uuid\Converter\Time\GenericTimeConverter;
 use Ramsey\Uuid\Converter\Time\PhpTimeConverter;
 use Ramsey\Uuid\Converter\TimeConverterInterface;
 use Ramsey\Uuid\Generator\PeclUuidTimeGenerator;
@@ -31,6 +33,8 @@ use Ramsey\Uuid\Generator\RandomGeneratorInterface;
 use Ramsey\Uuid\Generator\TimeGeneratorFactory;
 use Ramsey\Uuid\Generator\TimeGeneratorInterface;
 use Ramsey\Uuid\Guid\GuidBuilder;
+use Ramsey\Uuid\Math\BrickMathCalculator;
+use Ramsey\Uuid\Math\CalculatorInterface;
 use Ramsey\Uuid\Nonstandard\UuidBuilder as NonstandardUuidBuilder;
 use Ramsey\Uuid\Provider\Node\FallbackNodeProvider;
 use Ramsey\Uuid\Provider\Node\RandomNodeProvider;
@@ -110,6 +114,11 @@ class FeatureSet
     private $validator;
 
     /**
+     * @var CalculatorInterface
+     */
+    private $calculator;
+
+    /**
      * @param bool $useGuids True build UUIDs using the GuidStringCodec
      * @param bool $force32Bit True to force the use of 32-bit functionality
      *     (primarily for testing purposes)
@@ -132,6 +141,7 @@ class FeatureSet
         $this->ignoreSystemNode = $ignoreSystemNode;
         $this->enablePecl = $enablePecl;
 
+        $this->calculator = new BrickMathCalculator();
         $this->numberConverter = $this->buildNumberConverter();
         $this->timeConverter = $this->buildTimeConverter();
         $this->builder = $this->buildUuidBuilder($useGuids);
@@ -148,6 +158,11 @@ class FeatureSet
     public function getBuilder(): UuidBuilderInterface
     {
         return $this->builder;
+    }
+
+    public function getCalculator(): CalculatorInterface
+    {
+        return $this->calculator;
     }
 
     /**
@@ -196,6 +211,11 @@ class FeatureSet
     public function getValidator(): ValidatorInterface
     {
         return $this->validator;
+    }
+
+    public function setCalculator(CalculatorInterface $calculator): void
+    {
+        $this->calculator = $calculator;
     }
 
     /**
@@ -248,7 +268,7 @@ class FeatureSet
      */
     private function buildNumberConverter(): NumberConverterInterface
     {
-        return new BigNumberConverter();
+        return new GenericNumberConverter($this->getCalculator());
     }
 
     /**
@@ -283,11 +303,13 @@ class FeatureSet
      */
     private function buildTimeConverter(): TimeConverterInterface
     {
+        $genericConverter = new GenericTimeConverter($this->getCalculator());
+
         if ($this->is64BitSystem()) {
-            return new PhpTimeConverter();
+            return new PhpTimeConverter($genericConverter);
         }
 
-        return new BigNumberTimeConverter();
+        return $genericConverter;
     }
 
     /**

@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Ramsey\Uuid\Converter\Time;
 
 use Ramsey\Uuid\Converter\TimeConverterInterface;
+use Ramsey\Uuid\Math\BrickMathCalculator;
 use Ramsey\Uuid\Type\IntegerValue;
 
 /**
@@ -24,6 +25,20 @@ use Ramsey\Uuid\Type\IntegerValue;
  */
 class PhpTimeConverter implements TimeConverterInterface
 {
+    /**
+     * @var TimeConverterInterface
+     */
+    private $fallbackConverter;
+
+    public function __construct(?TimeConverterInterface $fallbackConverter = null)
+    {
+        if ($fallbackConverter === null) {
+            $fallbackConverter = new GenericTimeConverter(new BrickMathCalculator());
+        }
+
+        $this->fallbackConverter = $fallbackConverter;
+    }
+
     /**
      * @inheritDoc
      * @psalm-pure
@@ -48,7 +63,7 @@ class PhpTimeConverter implements TimeConverterInterface
         // Check to see whether we've overflowed the max/min integer size.
         // If so, we will default to a different time converter.
         if (!is_int($uuidTime)) {
-            return (new BigNumberTimeConverter())->calculateTime(
+            return $this->fallbackConverter->calculateTime(
                 $seconds->toString(),
                 $microSeconds->toString()
             );
@@ -73,7 +88,7 @@ class PhpTimeConverter implements TimeConverterInterface
         $unixTime = ((int) $timestamp->toString() - 0x01b21dd213814000) / 10000000;
 
         if (!is_int($unixTime)) {
-            return (new BigNumberTimeConverter())->convertTime(
+            return $this->fallbackConverter->convertTime(
                 $timestamp->toString()
             );
         }

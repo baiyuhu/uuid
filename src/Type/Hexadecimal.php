@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Ramsey\Uuid\Type;
 
 use Ramsey\Uuid\Exception\InvalidArgumentException;
-use Ramsey\Uuid\Math\Calculator;
+use Ramsey\Uuid\Math\BrickMathCalculator;
 
 use function ctype_xdigit;
 
@@ -65,6 +65,6 @@ final class Hexadecimal
 
     public function toIntegerValue(): IntegerValue
     {
-        return (new Calculator())->fromBase($this->value, 16);
+        return (new BrickMathCalculator())->fromBase($this->value, 16);
     }
 }
