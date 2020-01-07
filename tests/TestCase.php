@@ -17,20 +17,6 @@ class TestCase extends PhpUnitTestCase
         Mockery::close();
     }
 
-    protected function skipIfNoGmp(): void
-    {
-        if (!$this->hasGmp()) {
-            $this->markTestSkipped(
-                'Skipping test that requires GMP.'
-            );
-        }
-    }
-
-    protected function hasGmp(): bool
-    {
-        return extension_loaded('gmp');
-    }
-
     public static function isLittleEndianSystem(): bool
     {
         return current(unpack('v', pack('S', 0x00FF))) === 0x00FF;

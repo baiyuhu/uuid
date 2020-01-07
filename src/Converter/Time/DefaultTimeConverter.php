@@ -14,15 +14,10 @@ declare(strict_types=1);
 
 namespace Ramsey\Uuid\Converter\Time;
 
-use Ramsey\Uuid\Converter\DependencyCheckTrait;
-use Ramsey\Uuid\Converter\NumberStringTrait;
 use Ramsey\Uuid\Converter\TimeConverterInterface;
 
 class DefaultTimeConverter implements TimeConverterInterface
 {
-    use DependencyCheckTrait;
-    use NumberStringTrait;
-
     /**
      * @psalm-pure
      * @inheritDoc

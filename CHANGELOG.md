@@ -15,9 +15,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   * Add ability to change the default validator used by `Uuid` through
     `FeatureSet::setValidator()`.
   * Add `getValidator()` and `setValidator()` to `UuidFactory`.
-* Allow use of the [GMP extension](https://www.php.net/gmp) for number and time
-  conversion through the addition of `Converter\Number\GmpConverter` and
-  `Converter\Time\GmpTimeConverter`.
 * Add an internal `InvalidArgumentException` that descends from the built-in
   PHP `\InvalidArgumentException`. All places that used to throw
   `\InvalidArgumentException` now throw `Ramsey\Uuid\Exception\InvalidArgumentException`.
@@ -91,6 +88,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   * `Generator\MtRandGenerator`
   * `Generator\OpenSslGenerator`
   * `Generator\SodiumRandomGenerator`
+* Remove the classes for representing and generating *degraded* UUIDs. These are
+  no longer necessary; this library now behaves the same on 32-bit and 64-bit
+  PHP.
+  * `Builder\DegradedUuidBuilder`
+  * `Converter\Number\DegradedNumberConverter`
+  * `Converter\Time\DegradedTimeConverter`
+  * `DegradedUuid`
 
 ### Fixed
 
