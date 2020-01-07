@@ -14,11 +14,8 @@ declare(strict_types=1);
 
 namespace Ramsey\Uuid\Converter\Time;
 
-use Ramsey\Uuid\Converter\DependencyCheckTrait;
-use Ramsey\Uuid\Converter\NumberStringTrait;
 use Ramsey\Uuid\Converter\TimeConverterInterface;
-use Ramsey\Uuid\Exception\InvalidArgumentException;
-use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
+use Ramsey\Uuid\Type\IntegerValue;
 
 /**
  * PhpTimeConverter uses built-in PHP functions and standard math operations
@@ -27,26 +24,35 @@ use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
  */
 class PhpTimeConverter implements TimeConverterInterface
 {
-    use DependencyCheckTrait;
-    use NumberStringTrait;
-
     /**
-     * @throws InvalidArgumentException if $seconds or $microseconds are not integer strings
-     * @throws UnsatisfiedDependencyException if the chosen converter is not present
-     *
      * @inheritDoc
-     *
      * @psalm-pure
      */
     public function calculateTime(string $seconds, string $microSeconds): array
     {
-        $this->check64BitPhp();
-        $this->checkIntegerString($seconds, 'seconds');
-        $this->checkIntegerString($microSeconds, 'microSeconds');
+        $seconds = new IntegerValue($seconds);
+        $microSeconds = new IntegerValue($microSeconds);
 
-        // 0x01b21dd213814000 is the number of 100-ns intervals between the
+        // 0x01b21dd213814000 is the number of 100-nanosecond intervals between the
         // UUID epoch 1582-10-15 00:00:00 and the Unix epoch 1970-01-01 00:00:00.
-        $uuidTime = ((int) $seconds * 10000000) + ((int) $microSeconds * 10) + 0x01b21dd213814000;
+        // - A nanosecond is 1/1,000,000,000 of a second.
+        // - A nanosecond is 1/1,000 of a microsecond.
+        // - There are 10,000,000 100-nanosecond intervals within 1 second.
+        // - There are 10 100-nanosecond intervals within a microsecond.
+        // 910117910885 seconds and 477580 microseconds is upper bound for 64-bit.
+        // -922337203685 seconds and -477580 microseconds is the lower bound.
+        $uuidTime = ((int) $seconds->toString() * 10000000)
+            + ((int) $microSeconds->toString() * 10)
+            + 0x01b21dd213814000;
+
+        // Check to see whether we've overflowed the max/min integer size.
+        // If so, we will default to a different time converter.
+        if (!is_int($uuidTime)) {
+            return (new BigNumberTimeConverter())->calculateTime(
+                $seconds->toString(),
+                $microSeconds->toString()
+            );
+        }
 
         /** @psalm-suppress MixedArgument */
         return [
@@ -57,20 +63,21 @@ class PhpTimeConverter implements TimeConverterInterface
     }
 
     /**
-     * @throws InvalidArgumentException if $timestamp is not an integer string
-     * @throws UnsatisfiedDependencyException if the chosen converter is not present
-     *
      * @inheritDoc
-     *
      * @psalm-pure
      */
     public function convertTime(string $timestamp): string
     {
-        $this->check64BitPhp();
-        $this->checkIntegerString($timestamp, 'timestamp');
+        $timestamp = new IntegerValue($timestamp);
 
-        $unixTime = ((int) $timestamp - 0x01b21dd213814000) / 1e7;
+        $unixTime = ((int) $timestamp->toString() - 0x01b21dd213814000) / 10000000;
 
-        return number_format($unixTime, 0, '', '');
+        if (!is_int($unixTime)) {
+            return (new BigNumberTimeConverter())->convertTime(
+                $timestamp->toString()
+            );
+        }
+
+        return (string) $unixTime;
     }
 }

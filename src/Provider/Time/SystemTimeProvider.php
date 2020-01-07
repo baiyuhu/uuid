@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Ramsey\Uuid\Provider\Time;
 
 use Ramsey\Uuid\Provider\TimeProviderInterface;
-use Ramsey\Uuid\Type\Timestamp;
+use Ramsey\Uuid\Type\Time;
 
 /**
  * SystemTimeProvider retrieves the current time using built-in PHP functions
@@ -32,10 +32,10 @@ class SystemTimeProvider implements TimeProviderInterface
         return gettimeofday();
     }
 
-    public function getTimestamp(): Timestamp
+    public function getTimestamp(): Time
     {
         $time = gettimeofday();
 
-        return new Timestamp($time['sec'], $time['usec']);
+        return new Time($time['sec'], $time['usec']);
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Ramsey\Uuid\Test\Type;
 
 use Ramsey\Uuid\Test\TestCase;
-use Ramsey\Uuid\Type\Timestamp;
+use Ramsey\Uuid\Type\Time;
 
 class TimestampTest extends TestCase
 {
@@ -23,7 +23,7 @@ class TimestampTest extends TestCase
             $params[] = $microSeconds;
         }
 
-        $timestamp = new Timestamp(...$params);
+        $timestamp = new Time(...$params);
 
         $this->assertSame((string) $seconds, $timestamp->getSeconds()->toString());
 

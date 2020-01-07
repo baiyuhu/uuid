@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Ramsey\Uuid;
 
 use Ramsey\Uuid\Builder\DefaultUuidBuilder;
-use Ramsey\Uuid\Builder\DegradedUuidBuilder as Rfc4122DegradedUuidBuilder;
 use Ramsey\Uuid\Builder\FallbackBuilder;
 use Ramsey\Uuid\Builder\UuidBuilderInterface;
 use Ramsey\Uuid\Codec\CodecInterface;
@@ -33,9 +32,7 @@ use Ramsey\Uuid\Generator\RandomGeneratorFactory;
 use Ramsey\Uuid\Generator\RandomGeneratorInterface;
 use Ramsey\Uuid\Generator\TimeGeneratorFactory;
 use Ramsey\Uuid\Generator\TimeGeneratorInterface;
-use Ramsey\Uuid\Guid\DegradedGuidBuilder;
 use Ramsey\Uuid\Guid\GuidBuilder;
-use Ramsey\Uuid\Nonstandard\DegradedUuidBuilder as NonstandardDegradedUuidBuilder;
 use Ramsey\Uuid\Nonstandard\UuidBuilder as NonstandardUuidBuilder;
 use Ramsey\Uuid\Provider\Node\FallbackNodeProvider;
 use Ramsey\Uuid\Provider\Node\RandomNodeProvider;
@@ -319,24 +316,13 @@ class FeatureSet
      */
     private function buildUuidBuilder(bool $useGuids = false): UuidBuilderInterface
     {
-        if ($this->is64BitSystem() && $useGuids) {
+        if ($useGuids) {
             return new GuidBuilder($this->numberConverter, $this->timeConverter);
         }
 
-        if ($this->is64BitSystem()) {
-            return new FallbackBuilder([
-                new DefaultUuidBuilder($this->numberConverter, $this->timeConverter),
-                new NonstandardUuidBuilder($this->numberConverter, $this->timeConverter),
-            ]);
-        }
-
-        if ($useGuids) {
-            return new DegradedGuidBuilder($this->numberConverter, $this->timeConverter);
-        }
-
         return new FallbackBuilder([
-            new Rfc4122DegradedUuidBuilder($this->numberConverter, $this->timeConverter),
-            new NonstandardDegradedUuidBuilder($this->numberConverter, $this->timeConverter),
+            new DefaultUuidBuilder($this->numberConverter, $this->timeConverter),
+            new NonstandardUuidBuilder($this->numberConverter, $this->timeConverter),
         ]);
     }
 

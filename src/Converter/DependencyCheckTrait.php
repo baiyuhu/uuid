@@ -24,23 +24,6 @@ use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
 trait DependencyCheckTrait
 {
     /**
-     * Returns boolean true if the current build of PHP is a 64-bit build,
-     * throws UnsatisfiedDependencyException otherwise
-     *
-     * @throws UnsatisfiedDependencyException if PHP is not 64-bit
-     */
-    private function check64BitPhp(): bool
-    {
-        if ($this->getPhpIntSize() < 8) {
-            throw new UnsatisfiedDependencyException(
-                'The PHP build must be 64-bit to use this converter'
-            );
-        }
-
-        return true;
-    }
-
-    /**
      * Returns boolean true if the GMP extension is loaded, throws
      * UnsatisfiedDependencyException otherwise
      *
@@ -55,10 +38,5 @@ trait DependencyCheckTrait
         }
 
         return true;
-    }
-
-    protected function getPhpIntSize(): int
-    {
-        return PHP_INT_SIZE;
     }
 }

@@ -45,7 +45,7 @@ final class IntegerValue
         $value = (string) $value;
         $sign = '+';
 
-        // If the value contains a sign, remove it for ctypes_digit() check.
+        // If the value contains a sign, remove it for ctype_digit() check.
         if (strpos($value, '-') === 0 || strpos($value, '+') === 0) {
             $sign = substr($value, 0, 1);
             $value = substr($value, 1);
@@ -66,13 +66,13 @@ final class IntegerValue
         $this->value = $value;
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         return $this->value;
     }
 
-    public function toString(): string
+    public function __toString(): string
     {
-        return $this->value;
+        return $this->toString();
     }
 }

@@ -50,7 +50,10 @@ class BigNumberTimeConverterTest extends TestCase
         $converter = new BigNumberTimeConverter();
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('$seconds must contain only digits');
+        $this->expectExceptionMessage(
+            'Value must be a signed integer or a string containing only digits '
+            . '0-9 and, optionally, a sign (+ or -)'
+        );
 
         $converter->calculateTime('12.34', '5678');
     }
@@ -60,7 +63,10 @@ class BigNumberTimeConverterTest extends TestCase
         $converter = new BigNumberTimeConverter();
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('$microSeconds must contain only digits');
+        $this->expectExceptionMessage(
+            'Value must be a signed integer or a string containing only digits '
+            . '0-9 and, optionally, a sign (+ or -)'
+        );
 
         $converter->calculateTime('1234', '56.78');
     }
@@ -70,7 +76,10 @@ class BigNumberTimeConverterTest extends TestCase
         $converter = new BigNumberTimeConverter();
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('$timestamp must contain only digits');
+        $this->expectExceptionMessage(
+            'Value must be a signed integer or a string containing only digits '
+            . '0-9 and, optionally, a sign (+ or -)'
+        );
 
         $converter->convertTime('1234.56');
     }

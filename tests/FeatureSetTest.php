@@ -7,16 +7,16 @@ namespace Ramsey\Uuid\Test;
 use Mockery;
 use Ramsey\Uuid\Builder\FallbackBuilder;
 use Ramsey\Uuid\FeatureSet;
-use Ramsey\Uuid\Guid\DegradedGuidBuilder;
+use Ramsey\Uuid\Guid\GuidBuilder;
 use Ramsey\Uuid\Validator\ValidatorInterface;
 
 class FeatureSetTest extends TestCase
 {
-    public function testDegradedGuidBuilderIsSelectedOn32BitSystem(): void
+    public function testGuidBuilderIsSelectedOn32BitSystem(): void
     {
         $featureSet = new FeatureSet(true, true);
 
-        $this->assertInstanceOf(DegradedGuidBuilder::class, $featureSet->getBuilder());
+        $this->assertInstanceOf(GuidBuilder::class, $featureSet->getBuilder());
     }
 
     public function testFallbackBuilderIsSelectedOn32BitSystem(): void

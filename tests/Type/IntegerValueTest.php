@@ -20,7 +20,6 @@ class IntegerValueTest extends TestCase
         $integer = new IntegerValue($value);
 
         $this->assertSame($expected, $integer->toString());
-        $this->assertSame($expected, (string) $integer);
     }
 
     /**

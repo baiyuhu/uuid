@@ -7,6 +7,7 @@ namespace Ramsey\Uuid\Test\Generator;
 use AspectMock\Test as AspectMock;
 use Exception;
 use Mockery;
+use Mockery\MockInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Ramsey\Uuid\BinaryUtils;
 use Ramsey\Uuid\Converter\TimeConverterInterface;
@@ -15,12 +16,12 @@ use Ramsey\Uuid\Generator\DefaultTimeGenerator;
 use Ramsey\Uuid\Provider\NodeProviderInterface;
 use Ramsey\Uuid\Provider\TimeProviderInterface;
 use Ramsey\Uuid\Test\TestCase;
-use Ramsey\Uuid\Type\Timestamp;
+use Ramsey\Uuid\Type\Time;
 
 class DefaultTimeGeneratorTest extends TestCase
 {
     /**
-     * @var TimeProviderInterface & MockObject
+     * @var TimeProviderInterface & MockInterface
      */
     private $timeProvider;
 
@@ -62,7 +63,7 @@ class DefaultTimeGeneratorTest extends TestCase
         $this->currentTime = ['sec' => 1458733431, 'usec' => 877449];
         $this->calculatedTime = ['low' => '83cb98e0', 'mid' => '98e0', 'hi' => '03cb'];
 
-        $timestamp = new Timestamp($this->currentTime['sec'], $this->currentTime['usec']);
+        $timestamp = new Time($this->currentTime['sec'], $this->currentTime['usec']);
         $this->timeProvider = Mockery::mock(TimeProviderInterface::class, [
             'getTimestamp' => $timestamp,
         ]);

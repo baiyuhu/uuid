@@ -93,6 +93,16 @@ final class Fields implements FieldsInterface
         return bin2hex(substr($this->bytes, 4, 2));
     }
 
+    public function getTimestamp(): string
+    {
+        return sprintf(
+            '%03x%04s%08s',
+            hexdec($this->getTimeHiAndVersion()) & 0x0fff,
+            $this->getTimeMid(),
+            $this->getTimeLow()
+        );
+    }
+
     public function getVersion(): ?int
     {
         return null;

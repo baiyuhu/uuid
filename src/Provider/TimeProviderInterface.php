@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Ramsey\Uuid\Provider;
 
-use Ramsey\Uuid\Type\Timestamp;
+use Ramsey\Uuid\Type\Time;
 
 /**
  * A time provider retrieves the current time
@@ -33,5 +33,5 @@ interface TimeProviderInterface
     /**
      * Returns a timestamp object
      */
-    public function getTimestamp(): Timestamp;
+    public function getTimestamp(): Time;
 }

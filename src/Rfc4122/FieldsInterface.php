@@ -69,6 +69,11 @@ interface FieldsInterface extends BaseFieldsInterface
     public function getTimeMid(): string;
 
     /**
+     * Returns the full 60-bit timestamp, without the version
+     */
+    public function getTimestamp(): string;
+
+    /**
      * Returns the variant
      *
      * For RFC 4122 variant UUIDs, this value should always be the integer `2`.

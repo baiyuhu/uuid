@@ -15,7 +15,7 @@ class BigNumberConverterTest extends TestCase
         $converter = new BigNumberConverter();
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('$hex must contain only hexadecimal characters');
+        $this->expectExceptionMessage('"." is not a valid character in base 16');
 
         $converter->fromHex('123.34');
     }
@@ -25,7 +25,10 @@ class BigNumberConverterTest extends TestCase
         $converter = new BigNumberConverter();
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('$number must contain only digits');
+        $this->expectExceptionMessage(
+            'Value must be a signed integer or a string containing only digits '
+            . '0-9 and, optionally, a sign (+ or -)'
+        );
 
         $converter->toHex('123.34');
     }

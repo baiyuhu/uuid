@@ -23,7 +23,7 @@ namespace Ramsey\Uuid\Type;
  *
  * @psalm-immutable
  */
-final class Timestamp
+final class Time
 {
     /**
      * @var IntegerValue

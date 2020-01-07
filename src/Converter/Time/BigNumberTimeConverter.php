@@ -14,46 +14,49 @@ declare(strict_types=1);
 
 namespace Ramsey\Uuid\Converter\Time;
 
-use Brick\Math\BigInteger;
-use Brick\Math\RoundingMode;
-use Ramsey\Uuid\Converter\DependencyCheckTrait;
-use Ramsey\Uuid\Converter\NumberStringTrait;
 use Ramsey\Uuid\Converter\TimeConverterInterface;
-use Ramsey\Uuid\Exception\InvalidArgumentException;
+use Ramsey\Uuid\Math\Calculator;
+use Ramsey\Uuid\Type\IntegerValue;
+use Ramsey\Uuid\Type\Time;
 
 /**
- * BigNumberTimeConverter uses the brick/math library's `BigInteger` to
+ * BigNumberTimeConverter uses the brick/math library to
  * provide facilities for converting parts of time into representations that may
  * be used in UUIDs
  */
 class BigNumberTimeConverter implements TimeConverterInterface
 {
-    use DependencyCheckTrait;
-    use NumberStringTrait;
-
     /**
-     * @throws InvalidArgumentException if $seconds or $microseconds are not integer strings
-     *
      * @inheritDoc
-     *
      * @psalm-pure
-     * @psalm-suppress ImpureMethodCall The use of the external brick/math
-     *     library causes Psalm to complain about impure method calls.
      */
     public function calculateTime(string $seconds, string $microSeconds): array
     {
-        $this->checkIntegerString($seconds, 'seconds');
-        $this->checkIntegerString($microSeconds, 'microSeconds');
+        $timestamp = new Time($seconds, $microSeconds);
+        $calculator = new Calculator();
 
-        $sec = BigInteger::of($seconds)->multipliedBy('10000000');
-        $usec = BigInteger::of($microSeconds)->multipliedBy('10');
+        $sec = $calculator->multiply(
+            $timestamp->getSeconds(),
+            new IntegerValue('10000000')
+        );
 
-        $uuidTime = BigInteger::zero()
-            ->plus($sec)
-            ->plus($usec)
-            ->plus('122192928000000000');
+        $usec = $calculator->multiply(
+            $timestamp->getMicroSeconds(),
+            new IntegerValue('10')
+        );
 
-        $uuidTimeHex = str_pad($uuidTime->toBase(16), 16, '0', STR_PAD_LEFT);
+        $uuidTime = $calculator->add(
+            $sec,
+            $usec,
+            new IntegerValue('122192928000000000')
+        );
+
+        $uuidTimeHex = str_pad(
+            $calculator->toHexadecimal($uuidTime)->toString(),
+            16,
+            '0',
+            STR_PAD_LEFT
+        );
 
         return [
             'low' => substr($uuidTimeHex, 8),
@@ -63,21 +66,21 @@ class BigNumberTimeConverter implements TimeConverterInterface
     }
 
     /**
-     * @throws InvalidArgumentException if $timestamp is not an integer string
-     *
      * @inheritDoc
-     *
      * @psalm-pure
      */
     public function convertTime(string $timestamp): string
     {
-        $this->checkIntegerString($timestamp, 'timestamp');
+        $timestamp = new IntegerValue($timestamp);
+        $calculator = new Calculator();
 
-        /** @psalm-suppress ImpureMethodCall */
-        $ts = BigInteger::of($timestamp)
-            ->minus('122192928000000000')
-            ->dividedBy('10000000', RoundingMode::HALF_CEILING);
+        $ts = $calculator->subtract(
+            $timestamp,
+            new IntegerValue('122192928000000000')
+        );
 
-        return (string) $ts;
+        $ts = $calculator->divide($ts, new IntegerValue('10000000'));
+
+        return $ts->toString();
     }
 }

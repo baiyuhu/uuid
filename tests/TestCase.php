@@ -17,15 +17,6 @@ class TestCase extends PhpUnitTestCase
         Mockery::close();
     }
 
-    protected function skip64BitTest(): void
-    {
-        if (PHP_INT_SIZE === 4) {
-            $this->markTestSkipped(
-                'Skipping test that can run only on a 64-bit build of PHP.'
-            );
-        }
-    }
-
     protected function skipIfNoGmp(): void
     {
         if (!$this->hasGmp()) {
@@ -38,24 +29,6 @@ class TestCase extends PhpUnitTestCase
     protected function hasGmp(): bool
     {
         return extension_loaded('gmp');
-    }
-
-    protected function skipIfLittleEndianHost(): void
-    {
-        if (self::isLittleEndianSystem()) {
-            $this->markTestSkipped(
-                'Skipping test targeting big-endian architectures.'
-            );
-        }
-    }
-
-    protected function skipIfBigEndianHost(): void
-    {
-        if (!self::isLittleEndianSystem()) {
-            $this->markTestSkipped(
-                'Skipping test targeting little-endian architectures.'
-            );
-        }
     }
 
     public static function isLittleEndianSystem(): bool
