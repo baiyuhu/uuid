@@ -15,6 +15,12 @@
       <code>BigNumberTimeConverter</code>
     </DeprecatedClass>
   </file>
+  <file src="src/Converter/Time/PhpTimeConverter.php">
+    <InvalidOperand occurrences="2">
+      <code>$uuidTime</code>
+      <code>$uuidTime</code>
+    </InvalidOperand>
+  </file>
   <file src="src/Generator/PeclUuidRandomGenerator.php">
     <MixedAssignment occurrences="1">
       <code>$uuid</code>
