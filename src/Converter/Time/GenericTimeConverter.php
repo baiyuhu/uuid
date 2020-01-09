@@ -20,6 +20,8 @@ use Ramsey\Uuid\Type\IntegerValue;
 use Ramsey\Uuid\Type\Time;
 
 /**
+ * GenericTimeConverter uses the provided calculator to calculate and convert
+ * time values
  */
 class GenericTimeConverter implements TimeConverterInterface
 {

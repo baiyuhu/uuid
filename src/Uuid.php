@@ -144,7 +144,7 @@ class Uuid implements UuidInterface
     public const UUID_TYPE_HASH_SHA1 = 5;
 
     /**
-     * @var UuidFactoryInterface
+     * @var UuidFactoryInterface|null
      */
     private static $factory = null;
 
@@ -358,7 +358,7 @@ class Uuid implements UuidInterface
         } catch (\Throwable $exception) {
             throw new DateTimeException(
                 $exception->getMessage(),
-                $exception->getCode(),
+                (int) $exception->getCode(),
                 $exception
             );
         }
@@ -591,7 +591,7 @@ class Uuid implements UuidInterface
      */
     public static function getFactory(): UuidFactoryInterface
     {
-        if (!self::$factory) {
+        if (self::$factory === null) {
             self::$factory = new UuidFactory();
         }
 

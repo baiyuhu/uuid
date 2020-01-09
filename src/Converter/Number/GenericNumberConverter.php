@@ -19,6 +19,8 @@ use Ramsey\Uuid\Math\CalculatorInterface;
 use Ramsey\Uuid\Type\IntegerValue;
 
 /**
+ * GenericNumberConverter uses the provided calculate to convert decimal
+ * numbers to and from hexadecimal values
  */
 class GenericNumberConverter implements NumberConverterInterface
 {
