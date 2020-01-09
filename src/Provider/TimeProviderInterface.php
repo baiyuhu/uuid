@@ -24,14 +24,14 @@ interface TimeProviderInterface
     /**
      * Returns a timestamp array
      *
-     * @deprecated Transition to {@see TimeProviderInterface::getTimestamp()}.
+     * @deprecated Transition to {@see TimeProviderInterface::getTime()}.
      *
      * @return int[]|string[] Array containing `sec` and `usec` components of a timestamp
      */
     public function currentTime(): array;
 
     /**
-     * Returns a timestamp object
+     * Returns a time object
      */
-    public function getTimestamp(): Time;
+    public function getTime(): Time;
 }

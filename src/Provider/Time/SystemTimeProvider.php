@@ -23,7 +23,7 @@ use Ramsey\Uuid\Type\Time;
 class SystemTimeProvider implements TimeProviderInterface
 {
     /**
-     * @deprecated Transition to {@see SystemTimeProvider::getTimestamp()}
+     * @deprecated Transition to {@see SystemTimeProvider::getTime()}
      *
      * @inheritDoc
      */
@@ -32,7 +32,7 @@ class SystemTimeProvider implements TimeProviderInterface
         return gettimeofday();
     }
 
-    public function getTimestamp(): Time
+    public function getTime(): Time
     {
         $time = gettimeofday();
 

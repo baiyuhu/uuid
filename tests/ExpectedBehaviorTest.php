@@ -539,7 +539,7 @@ class ExpectedBehaviorTest extends TestCase
                 'sec' => 1578522046,
                 'usec' => 10000,
             ],
-            'getTimestamp' => new Time(1578522046, 10000),
+            'getTime' => new Time(1578522046, 10000),
         ]);
 
         $generator = new DefaultTimeGenerator($nodeProvider, $timeConverter, $timeProvider);

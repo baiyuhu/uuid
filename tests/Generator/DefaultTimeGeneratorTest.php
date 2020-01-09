@@ -63,9 +63,9 @@ class DefaultTimeGeneratorTest extends TestCase
         $this->currentTime = ['sec' => 1458733431, 'usec' => 877449];
         $this->calculatedTime = ['low' => '83cb98e0', 'mid' => '98e0', 'hi' => '03cb'];
 
-        $timestamp = new Time($this->currentTime['sec'], $this->currentTime['usec']);
+        $time = new Time($this->currentTime['sec'], $this->currentTime['usec']);
         $this->timeProvider = Mockery::mock(TimeProviderInterface::class, [
-            'getTimestamp' => $timestamp,
+            'getTime' => $time,
         ]);
     }
 

@@ -19,9 +19,9 @@ use Ramsey\Uuid\Provider\TimeProviderInterface;
 use Ramsey\Uuid\Type\Time;
 
 /**
- * FixedTimeProvider uses an known timestamp to provide the time
+ * FixedTimeProvider uses an known time to provide the time
  *
- * This provider allows the use of a previously-generated, or known, timestamp
+ * This provider allows the use of a previously-generated, or known, time
  * when generating time-based UUIDs.
  */
 class FixedTimeProvider implements TimeProviderInterface
@@ -32,23 +32,23 @@ class FixedTimeProvider implements TimeProviderInterface
     private $fixedTime;
 
     /**
-     * @param int[]|string[]|Time $timestamp An array containing 'sec' and
-     *     'usec' keys or a Timestamp object
+     * @param int[]|string[]|Time $time An array containing 'sec' and
+     *     'usec' keys or a Time object
      *
-     * @throws InvalidArgumentException if the `$timestamp` does not contain
+     * @throws InvalidArgumentException if the `$time` does not contain
      *     `sec` or `usec` components
      */
-    public function __construct($timestamp)
+    public function __construct($time)
     {
-        if (!$timestamp instanceof Time) {
-            $timestamp = $this->convertToTimestamp($timestamp);
+        if (!$time instanceof Time) {
+            $time = $this->convertToTime($time);
         }
 
-        $this->fixedTime = $timestamp;
+        $this->fixedTime = $time;
     }
 
     /**
-     * Sets the `usec` component of the timestamp
+     * Sets the `usec` component of the time
      *
      * @param int|string|Time $value The `usec` value to set
      */
@@ -58,7 +58,7 @@ class FixedTimeProvider implements TimeProviderInterface
     }
 
     /**
-     * Sets the `sec` component of the timestamp
+     * Sets the `sec` component of the time
      *
      * @param int|string|Time $value The `sec` value to set
      */
@@ -68,7 +68,7 @@ class FixedTimeProvider implements TimeProviderInterface
     }
 
     /**
-     * @deprecated Transition to {@see FixedTimeProvider::getTimestamp()}
+     * @deprecated Transition to {@see FixedTimeProvider::getTime()}
      *
      * @inheritDoc
      */
@@ -80,25 +80,25 @@ class FixedTimeProvider implements TimeProviderInterface
         ];
     }
 
-    public function getTimestamp(): Time
+    public function getTime(): Time
     {
         return $this->fixedTime;
     }
 
     /**
-     * @param int[]|string[] $timestamp
+     * @param int[]|string[] $time
      *
-     * @return Time A timestamp created from the provided array
+     * @return Time A time created from the provided array
      *
-     * @throws InvalidArgumentException if the `$timestamp` does not contain
+     * @throws InvalidArgumentException if the `$time` does not contain
      *     `sec` or `usec` components
      */
-    private function convertToTimestamp(array $timestamp): Time
+    private function convertToTime(array $time): Time
     {
-        if (!array_key_exists('sec', $timestamp) || !array_key_exists('usec', $timestamp)) {
+        if (!array_key_exists('sec', $time) || !array_key_exists('usec', $time)) {
             throw new InvalidArgumentException('Array must contain sec and usec keys.');
         }
 
-        return new Time($timestamp['sec'], $timestamp['usec']);
+        return new Time($time['sec'], $time['usec']);
     }
 }
