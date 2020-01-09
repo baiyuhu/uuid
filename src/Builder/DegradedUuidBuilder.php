@@ -14,10 +14,62 @@ declare(strict_types=1);
 
 namespace Ramsey\Uuid\Builder;
 
+use Ramsey\Uuid\Codec\CodecInterface;
+use Ramsey\Uuid\Converter\NumberConverterInterface;
+use Ramsey\Uuid\Converter\Time\DegradedTimeConverter;
+use Ramsey\Uuid\Converter\TimeConverterInterface;
+use Ramsey\Uuid\DegradedUuid;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
+
 /**
  * @deprecated DegradedUuid instances are no longer necessary to support 32-bit
  *     systems. Transition to {@see DefaultUuidBuilder}.
+ *
+ * @psalm-immutable
  */
-class DegradedUuidBuilder extends DefaultUuidBuilder
+class DegradedUuidBuilder implements UuidBuilderInterface
 {
+    /**
+     * @var NumberConverterInterface
+     */
+    private $numberConverter;
+
+    /**
+     * @var TimeConverterInterface
+     */
+    private $timeConverter;
+
+    /**
+     * @param NumberConverterInterface $numberConverter The number converter to
+     *     use when constructing the Uuid
+     * @param TimeConverterInterface $timeConverter The time converter to use
+     *     for converting timestamps extracted from a UUID to Unix timestamps
+     */
+    public function __construct(
+        NumberConverterInterface $numberConverter,
+        ?TimeConverterInterface $timeConverter = null
+    ) {
+        $this->numberConverter = $numberConverter;
+        $this->timeConverter = $timeConverter ?: new DegradedTimeConverter();
+    }
+
+    /**
+     * Builds and returns a DegradedUuid
+     *
+     * @param CodecInterface $codec The codec to use for building this Uuid instance
+     * @param string[] $fields An array of fields from which to construct a Uuid instance;
+     *     see {@see \Ramsey\Uuid\UuidInterface::getFieldsHex()} for array structure.
+     *
+     * @return Uuid The DegradedUuidBuilder returns an instance of Ramsey\Uuid\DegradedUuid
+     */
+    public function build(CodecInterface $codec, array $fields): UuidInterface
+    {
+        return new DegradedUuid(
+            $fields,
+            $this->numberConverter,
+            $codec,
+            $this->timeConverter
+        );
+    }
 }
