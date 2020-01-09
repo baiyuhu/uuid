@@ -78,6 +78,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Deprecated
 
+* `Converter\Number\BigNumberConverter` is deprecated; transition to
+  `Converter\Number\GenericNumberConverter`.
+* `Converter\Time\BigNumberTimeConverter` is deprecated; transition to
+  `Converter\Time\GenericTimeConverter`.
 * `Provider\TimeProviderInterface::currentTime()` is deprecated; transition to
   the `getTimestamp()` method on the same interface.
 * The classes for representing and generating *degraded* UUIDs are deprecated
