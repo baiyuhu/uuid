@@ -80,6 +80,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 * `Provider\TimeProviderInterface::currentTime()` is deprecated; transition to
   the `getTimestamp()` method on the same interface.
+* The classes for representing and generating *degraded* UUIDs are deprecated
+  and will be removed in ramsey/uuid 5.0.0. These are no longer necessary; this
+  library now behaves the same on 32-bit and 64-bit PHP.
+  * `Builder\DegradedUuidBuilder`
+  * `Converter\Number\DegradedNumberConverter`
+  * `Converter\Time\DegradedTimeConverter`
+  * `DegradedUuid`
 
 ### Removed
 
@@ -88,13 +95,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   * `Generator\MtRandGenerator`
   * `Generator\OpenSslGenerator`
   * `Generator\SodiumRandomGenerator`
-* Remove the classes for representing and generating *degraded* UUIDs. These are
-  no longer necessary; this library now behaves the same on 32-bit and 64-bit
-  PHP.
-  * `Builder\DegradedUuidBuilder`
-  * `Converter\Number\DegradedNumberConverter`
-  * `Converter\Time\DegradedTimeConverter`
-  * `DegradedUuid`
 
 ### Fixed
 
